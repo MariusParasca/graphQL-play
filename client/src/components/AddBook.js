@@ -1,7 +1,7 @@
 import React, { useCallback, useState } from 'react';
 import { graphql } from 'react-apollo';
 import { flowRight as compose } from 'lodash';
-import { getAuthorsQuery, addBookMutation } from '../queries/queries';
+import { getAuthorsQuery, addBookMutation, getBooksQuery } from '../queries/queries';
 
 function AddBook(props) {
   const [book, setBook] = useState({ name: "", genre: "", authorId: "" });
@@ -24,7 +24,14 @@ function AddBook(props) {
   const submitForm = useCallback(
     (e) => {
       e.preventDefault();
-      props.addBookMutation(book);
+      props.addBookMutation({
+        variables: {
+          name: book.name,
+          genre: book.genre,
+          authorId: book.authorId
+        },
+        refetchQueries: [{ query: getBooksQuery }]
+      });
     },
     [book, props],
   );
